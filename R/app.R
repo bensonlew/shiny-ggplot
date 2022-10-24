@@ -8,6 +8,7 @@
 ## Set working directory (FOR LOCAL TESTING ONLY)
 
 os_type = .Platform$OS.type
+options(shiny.reactlog=TRUE) 
 
 # database
 library(shiny)

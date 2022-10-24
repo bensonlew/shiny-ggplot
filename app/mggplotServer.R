@@ -16,7 +16,7 @@
 #' @import ggplot2
 #' @importFrom datamods import_modal import_server
 #'
-esquisserServer2 <- function(input,
+mggplotServer <- function(input,
                             output,
                             session,
                             data = NULL,
@@ -26,13 +26,34 @@ esquisserServer2 <- function(input,
   ns <- session$ns
   ggplotCall <- reactiveValues(code = "")
   dataChart <- reactiveValues(data = NULL, name = NULL)
-
   # Settings modal (aesthetics choices)
   observeEvent(input$settings_pre, {
     showModal(pre_settings(view=input$view))
+    
+    # hideTab(inputId="mggplot", target="ui_aesthetics")
   })
   observeEvent(input$settings, {
     showModal(modal_settings(aesthetics = input$aesthetics))
+  })
+
+  observeEvent(input$view, {
+    # print(paste("input view", input$view))
+     if("show_aes" %in% input$view){
+      shinyjs::show(id="aes_show")
+     }else{
+      shinyjs::hide(id="aes_show")
+     }
+     if("show_table" %in% input$view){
+      shinyjs::show(selector=".flexfill-item:first")
+     }else{
+      shinyjs::hide(selector=".flexfill-item:first")
+     }
+    #  if("show_img" %in% input$view){
+    #   shinyjs::show(id="img_show")
+    #  }else{
+    #   shinyjs::hide(id="img_show")
+    #  }
+
   })
 
 
@@ -109,6 +130,18 @@ esquisserServer2 <- function(input,
     data <- data_imported_r$data()
     dataChart$data <- data
     dataChart$name <- data_imported_r$name()
+  })
+
+  # 修改数据表
+  observeEvent(paramsChart$inputs$vol_scatter, {
+    # browser()
+    # print("change")
+    print(paste("paramsChart$inputs$vol_scatter", paramsChart$inputs$vol_scatter))
+    if(paramsChart$inputs$vol_scatter){
+      dataChart$data[["log_padjust"]] = -log(dataChart$data[["padjust"]])
+      vol_logp_max = max(dataChart$data[["log_padjust"]][dataChart$data[["log_padjust"]]!=Inf])
+      dataChart$data[["log_padjust"]][dataChart$data[["log_padjust"]]==Inf] = vol_logp_max
+    }
   })
 
   # Update drag-and-drop input when data changes
@@ -222,14 +255,15 @@ esquisserServer2 <- function(input,
   )
 
   output$plooooooot <- renderPlot({
+    
     req(input$play_plot, cancelOutput = TRUE)
     req(dataChart$data)
     req(paramsChart$data)
     req(paramsChart$inputs)
     req(input$geom)
-
+    # print(paramsChart$inputs)
     aes_input <- make_aes(input$dragvars$target)
-
+    # hide(id="aes_show")
     req(unlist(aes_input) %in% names(dataChart$data))
 
     mapping <- build_aes(

@@ -31,12 +31,12 @@
 #' @importFrom shiny fillPage plotOutput icon actionButton NS fluidRow column fillCol
 #' @importFrom shinyWidgets prettyToggle
 #'
-esquisserUI2 <- function(id, header = TRUE,
+mggplotUI <- function(id, header = TRUE,
                         container = esquisseContainer(),
                         choose_data = TRUE,
                         insert_code = FALSE,
                         disable_filters = FALSE) {
-  .Deprecated(new = "esquisse_ui", package = "esquisse", old = "esquisserUI")
+  # .Deprecated(new = "esquisse_ui", package = "esquisse", old = "esquisserUI")
   ns <- NS(id)
 
   box_title <- tags$div(
@@ -50,6 +50,10 @@ esquisserUI2 <- function(id, header = TRUE,
         icon = icon("gear", class = "fa-lg"),
         class = "btn-sm",
         title = "设置"
+      ),
+      actionButton(
+        inputId = ns("hidden_aes"),
+        label = "hidden_aes"
       ),
       actionButton(
         inputId = ns("settings"),
@@ -91,6 +95,7 @@ esquisserUI2 <- function(id, header = TRUE,
     if (isTRUE(header)) box_title,
     # 数据映射模块
     tags$div(
+      id = ns("aes_show"),
       class = "esquisse-geom-aes",
       tags$div(
         style = if (isTRUE(choose_data) & !isTRUE(header)) {
@@ -122,10 +127,12 @@ esquisserUI2 <- function(id, header = TRUE,
     fillRow(
       style = "overflow-y: auto;",
       tags$div(
+        id = ns("table_show"),
         style = "height: 100%; width: 100%; min-height: 400px;",
         DT::dataTableOutput(ns("plotdata"), width = "100%", height = "100%")
       ),
       tags$div(
+        id = ns("img_show"),
         style = "height: 100%; width: 100%; min-height: 400px;",
         tags$div(
           style = "position: absolute; right: 0; top: 5px; font-weight: bold; z-index: 1000;",

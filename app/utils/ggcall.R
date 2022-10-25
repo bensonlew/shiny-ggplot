@@ -42,7 +42,11 @@ ggcall <- function(data = NULL,
                    facet_col = NULL,
                    facet_args = list(),
                    xlim = NULL,
-                   ylim = NULL) {
+                   ylim = NULL,
+                   hline = NULL,
+                   vline = NULL,
+                   vol_markgene_text = NULL
+                   ) {
   if (is.null(data))
     return(expr(ggplot()))
   if (!is_call(data)) {
@@ -134,7 +138,8 @@ ggcall <- function(data = NULL,
       ggcall <- expr(!!ggcall + !!facet)
     }
   }
-  
+  # print(xlim)
+  # print(ylim)
   if (has_length(xlim, 2)) {
     xlim <- expr(xlim(!!!as.list(xlim)))
     ggcall <- expr(!!ggcall + !!xlim)
@@ -142,6 +147,27 @@ ggcall <- function(data = NULL,
   if (has_length(ylim, 2)) {
     ylim <- expr(ylim(!!!as.list(ylim)))
     ggcall <- expr(!!ggcall + !!ylim)
+  }
+  # print(hline)
+  # print(vline)
+  if (!is.null(hline)) {
+    args <- c(yintercept=as.numeric(hline))
+    hline_c <- expr(geom_hline(!!call2("aes", !!!args), linetype=5,col="red"))
+    ggcall <- expr(!!ggcall + !!hline_c)
+  }
+
+  if (!is.null(vline)) {
+    args <- c(xintercept=as.numeric(vline))
+    vline_c1 <- expr(geom_vline(!!call2("aes", !!!args), linetype=5,col="red")) 
+    args <- c(xintercept=as.numeric(-vline))
+    vline_c2 <- expr(geom_vline(!!call2("aes", !!!args), linetype=5,col="red")) 
+    # + expr(geom_vline(aes(xintercept=-!!vline), linetype=5,col="red"))
+    ggcall <- expr(!!ggcall + !!vline_c1 + !!vline_c2) 
+  }
+
+  if(!is.null(vol_markgene_text)){
+    print(vol_markgene_text)
+    geom_label_repel(data=mark_data, aes(label=gene_id), color = "black", point.padding=0, box.padding = 2, label.padding=0.25)
   }
   
   ggcall

@@ -686,8 +686,64 @@ controls_preprocessing <- function(ns){
       status_on = "success",
       status_off = "danger",
       label_off = mgi18n("No"),
-      inline = TRUE
+      inline = FALSE
+    ),
+    tags$label(
+      class = "control-label",
+      `for` = ns("vol_sig"),
+      mgi18n("vol significant color:")
+    ),
+    prettyToggle(
+      inputId = ns("vol_sig"),
+      label_on = mgi18n("Yes"),
+      status_on = "success",
+      status_off = "danger",
+      label_off = mgi18n("No"),
+      inline = FALSE,
+    ),
+    tags$label(
+      class = "control-label",
+      `for` = ns("vol_line"),
+      mgi18n("vol line:")
+    ),
+    prettyToggle(
+      inputId = ns("vol_line"),
+      label_on = mgi18n("Yes"),
+      status_on = "success",
+      status_off = "danger",
+      label_off = mgi18n("No"),
+      inline = FALSE
+    ),
+    numericInput(
+      inputId = ns("vol_line_logp"),
+      label = mgi18n("vol logp"),
+      value = 3
+    ),
+    numericInput(
+      inputId = ns("vol_line_logfc"),
+      label = mgi18n("vol logfc"),
+      value = 1
+    ),
+
+    tags$label(
+      class = "control-label",
+      `for` = ns("vol_markgene"),
+      mgi18n("vol markgene:")
+    ),
+    prettyToggle(
+      inputId = ns("vol_markgene"),
+      label_on = mgi18n("Yes"),
+      status_on = "success",
+      status_off = "danger",
+      label_off = mgi18n("No"),
+      inline = FALSE
+    ),
+    textAreaInput(
+      inputId = ns("vol_markgene_text"),
+      label = mgi18n("vol mark gene ids")
     )
+
+
   )
 }
 

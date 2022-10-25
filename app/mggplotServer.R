@@ -136,11 +136,28 @@ mggplotServer <- function(input,
   observeEvent(paramsChart$inputs$vol_scatter, {
     # browser()
     # print("change")
-    print(paste("paramsChart$inputs$vol_scatter", paramsChart$inputs$vol_scatter))
+    # print(paste("paramsChart$inputs$vol_scatter", paramsChart$inputs$vol_scatter))
+    data <- isolate(dataChart$data)
     if(paramsChart$inputs$vol_scatter){
-      dataChart$data[["log_padjust"]] = -log(dataChart$data[["padjust"]])
-      vol_logp_max = max(dataChart$data[["log_padjust"]][dataChart$data[["log_padjust"]]!=Inf])
-      dataChart$data[["log_padjust"]][dataChart$data[["log_padjust"]]==Inf] = vol_logp_max
+      data[["log_padjust"]] = -log(data[["padjust"]])
+      vol_logp_max = max(data[["log_padjust"]][data[["log_padjust"]]!=Inf])
+      data[["log_padjust"]][data[["log_padjust"]]==Inf] = vol_logp_max
+      dataChart$data <- data
+    }
+  })
+
+  # 修改数据表
+  observeEvent(paramsChart$inputs$vol_sig, {
+    # browser()
+    # print("change")
+    # print(paste("paramsChart$inputs$vol_scatter", paramsChart$inputs$vol_scatter))
+    data <- isolate(dataChart$data)
+    if(paramsChart$inputs$vol_sig){
+      data[["reg_sig"]] = data[["significant"]]
+      data[["reg_sig"]][data[["reg_sig"]]=="no test"] = "no"
+      data[["reg_sig"]][data[["reg_sig"]]=="yes" & data[["regulate"]]=="up"] = "up"
+      data[["reg_sig"]][data[["reg_sig"]]=="yes" & data[["regulate"]]=="down"] = "down"
+      dataChart$data <- data
     }
   })
 
@@ -327,6 +344,25 @@ mggplotServer <- function(input,
       ylim <- NULL
     }
 
+    if (isTRUE(paramsChart$inputs$vol_line)){
+      hline <- paramsChart$inputs$vol_line_logp
+      vline <- paramsChart$inputs$vol_line_logfc
+    }else{
+      hline <- NULL
+      vline <- NULL
+    }
+
+    if (isTRUE(paramsChart$inputs$vol_markgene)){
+      vol_markgene_text <- paramsChart$inputs$vol_markgene_text
+      gene_id_list <- strsplit(vol_markgene_text, "\n")
+      choose_data[data[["gene_id"]] %in% gene_id_list, ]
+    }else{
+      vol_markgene_text <- NULL
+    }
+
+    
+    
+
     data_name <- dataChart$name %||% "data"
     gg_call <- ggcall(
       data = data_name,
@@ -344,7 +380,10 @@ mggplotServer <- function(input,
       facet_col = input$dragvars$target$facet_col,
       facet_args = paramsChart$facet,
       xlim = xlim,
-      ylim = ylim
+      ylim = ylim,
+      hline = hline,
+      vline = vline,
+      vol_markgene_text = vol_markgene_text
     )
 
     ggplotCall$code <- deparse2(gg_call)

@@ -11,6 +11,7 @@ library(datamods)
 library(DT)
 library(phosphoricons)
 library(jsonlite)
+library(rlang)
 
 # source("onLoad.R")
 source("utils/utils.R")
@@ -23,7 +24,7 @@ source("utils/mapping.R")
 source("modules/settings.R")
 source("modules/input-drop.R")
 source("modules/input-dragula.R")
-
+source("utils/ggcall.R")
 mytrantab = read.csv("inst/i18n/cn.csv")
 mgi18n <- function(a){
     i18n(a, mytrantab)

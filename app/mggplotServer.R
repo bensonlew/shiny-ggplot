@@ -271,9 +271,10 @@ mggplotServer <- function(input,
     options = list(scrollX = TRUE)
   )
 
-  output$plooooooot <- renderPlot({
+  # render plot 增加下载功能
+  render_ggplot("plooooooot", {
     
-    req(input$play_plot, cancelOutput = TRUE)
+    # req(input$play_plot, cancelOutput = TRUE)
     req(dataChart$data)
     req(paramsChart$data)
     req(paramsChart$inputs)
@@ -352,18 +353,41 @@ mggplotServer <- function(input,
       vline <- NULL
     }
 
+    # if (isTRUE(paramsChart$inputs$vol_markgene)){
+    #   vol_markgene_text <- paramsChart$inputs$vol_markgene_text
+    #   gene_id_list <- strsplit(vol_markgene_text, "\n")
+    #   choose_data[data[["gene_id"]] %in% gene_id_list, ]
+    # }else{
+    #   vol_markgene_text <- NULL
+    # }
+
+    choose_data_fun <- eventReactive(c(paramsChart$inputs$vol_markgene_text, dataChart$data), {
+      if (isTRUE(paramsChart$inputs$vol_markgene)){
+        vol_markgene_text <- paramsChart$inputs$vol_markgene_text
+        print(vol_markgene_text)
+        gene_id_list <- strsplit(vol_markgene_text, "\n")
+        print(gene_id_list)
+        data <- dataChart$data
+        choose_data <-  data[data[["gene_id"]] %in% as.vector(gene_id_list[[1]]), ]
+      }else{
+        choose_data <- NULL
+      }
+      choose_data
+    })
+
+    choose_data_name <- NULL
+
+
     if (isTRUE(paramsChart$inputs$vol_markgene)){
-      vol_markgene_text <- paramsChart$inputs$vol_markgene_text
-      gene_id_list <- strsplit(vol_markgene_text, "\n")
-      choose_data[data[["gene_id"]] %in% gene_id_list, ]
+      choose_data_name <- "choose_data"
     }else{
-      vol_markgene_text <- NULL
+      choose_data_name <- NULL
     }
 
     
-    
 
     data_name <- dataChart$name %||% "data"
+    choose_data <- choose_data_fun()
     gg_call <- ggcall(
       data = data_name,
       mapping = mapping,
@@ -383,7 +407,7 @@ mggplotServer <- function(input,
       ylim = ylim,
       hline = hline,
       vline = vline,
-      vol_markgene_text = vol_markgene_text
+      markgene_data = choose_data_name
     )
 
     ggplotCall$code <- deparse2(gg_call)
@@ -391,10 +415,10 @@ mggplotServer <- function(input,
 
     ggplotCall$ggobj <- safe_ggplot(
       expr = gg_call,
-      data = setNames(list(data), data_name)
+      data = setNames(list(data, choose_data), c(data_name, "choose_data"))
     )
     ggplotCall$ggobj$plot
-  })
+  }, filename = "mggplot")
 
 
   # Close addin

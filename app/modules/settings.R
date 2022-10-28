@@ -82,10 +82,12 @@ pre_settings <- function(view = NULL, session = shiny::getDefaultReactiveDomain(
       choiceNames = list(
         tagList(tags$b("映射"), mgi18n("展示映射关系")),
         tagList(tags$b("表格"), mgi18n("展示表格")),
-        tagList(tags$b("图片"), mgi18n("展示图片"))
+        tagList(tags$b("图片"), mgi18n("展示图片")),
+        tagList(tags$b("固定尺寸"), mgi18n("固定尺寸")),
+        tagList(tags$b("输入数据"), mgi18n("输入数据"))
       ),
-      choiceValues = c("show_aes", "show_table", "show_img"),
-      selected = view %||% c("show_aes", "show_table", "show_img"),
+      choiceValues = c("show_aes", "show_table", "show_img", "fix_img_size", "show_importdata"),
+      selected = view %||% c("show_aes", "show_table", "show_img", "fix_img_size", "show_importdata"),
       status = "primary"
     ),
     easyClose = TRUE,

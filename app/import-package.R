@@ -20,11 +20,13 @@ source("utils/utils-shiny.R")
 
 source("modules/module-controls.R")
 source("modules/input-colors.R")
+source("modules/export.R")
 source("utils/mapping.R")
 source("modules/settings.R")
 source("modules/input-drop.R")
 source("modules/input-dragula.R")
 source("utils/ggcall.R")
+source("utils/safe_ggplot.R")
 mytrantab = read.csv("inst/i18n/cn.csv")
 mgi18n <- function(a){
     i18n(a, mytrantab)

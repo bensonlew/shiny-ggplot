@@ -216,8 +216,9 @@ save_ggplot_server <- function(id, plot_rv) {
 #' @importFrom shinyWidgets dropMenu
 #'
 #' @example examples/render-ggplot.R
-ggplot_output <- function(id, width = "100%", height = "400px", downloads = downloads_labels(), ...) {
+ggplot_output <- function(id="plooooooot", width = "100%", height = "400px", downloads = downloads_labels(), ...) {
   ns <- NS(id)
+  print(c("ns is: ", ns))
   tags$div(
     class = "ggplot-container",
     style = css(

@@ -45,7 +45,7 @@ ggcall <- function(data = NULL,
                    ylim = NULL,
                    hline = NULL,
                    vline = NULL,
-                   vol_markgene_text = NULL
+                   markgene_data = NULL
                    ) {
   if (is.null(data))
     return(expr(ggplot()))
@@ -165,9 +165,12 @@ ggcall <- function(data = NULL,
     ggcall <- expr(!!ggcall + !!vline_c1 + !!vline_c2) 
   }
 
-  if(!is.null(vol_markgene_text)){
-    print(vol_markgene_text)
-    geom_label_repel(data=mark_data, aes(label=gene_id), color = "black", point.padding=0, box.padding = 2, label.padding=0.25)
+  if(!is.null(markgene_data)){
+    print(markgene_data)
+    # choose_data <- markgene_data
+    # print(choose_data)
+    geom_label <- expr(geom_label_repel(data=!!sym(markgene_data), aes(label=gene_id), color = "black", point.padding=0, box.padding = 2, label.padding=0.25))
+    ggcall <- expr(!!ggcall + !!geom_label)
   }
   
   ggcall

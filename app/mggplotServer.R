@@ -271,6 +271,8 @@ mggplotServer <- function(input,
     options = list(scrollX = TRUE)
   )
 
+  # output$plotdata
+
   # render plot 增加下载功能
   render_ggplot("plooooooot", {
     
@@ -363,11 +365,15 @@ mggplotServer <- function(input,
 
     choose_data_fun <- eventReactive(c(paramsChart$inputs$vol_markgene_text, dataChart$data), {
       if (isTRUE(paramsChart$inputs$vol_markgene)){
+        print(input$plotdata_rows_selected)
+        
         vol_markgene_text <- paramsChart$inputs$vol_markgene_text
         print(vol_markgene_text)
         gene_id_list <- strsplit(vol_markgene_text, "\n")
         print(gene_id_list)
+        
         data <- dataChart$data
+        # chhose_data <- data[input$plotdata_rows_selected, ]
         choose_data <-  data[data[["gene_id"]] %in% as.vector(gene_id_list[[1]]), ]
       }else{
         choose_data <- NULL

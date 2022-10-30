@@ -12,6 +12,7 @@ library(DT)
 library(phosphoricons)
 library(jsonlite)
 library(rlang)
+library("ggrepel")
 
 # source("onLoad.R")
 source("utils/utils.R")

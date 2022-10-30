@@ -725,19 +725,27 @@ controls_preprocessing <- function(ns){
       value = 1
     ),
 
-    tags$label(
-      class = "control-label",
-      `for` = ns("vol_markgene"),
-      mgi18n("vol markgene:")
-    ),
-    prettyToggle(
+    pickerInput(
       inputId = ns("vol_markgene"),
-      label_on = mgi18n("Yes"),
-      status_on = "success",
-      status_off = "danger",
-      label_off = mgi18n("No"),
-      inline = FALSE
+      label = mgi18n("Mark gene:"),
+      choices = c("no", "text", "table"),
+      selected = "no",
+      options = list(size = 10, container = "body"),
+      width = "100%"
     ),
+    # tags$label(
+    #   class = "control-label",
+    #   `for` = ns("vol_markgene"),
+    #   mgi18n("vol markgene:")
+    # ),
+    # prettyToggle(
+    #   inputId = ns("vol_markgene"),
+    #   label_on = mgi18n("Yes"),
+    #   status_on = "success",
+    #   status_off = "danger",
+    #   label_off = mgi18n("No"),
+    #   inline = FALSE
+    # ),
     textAreaInput(
       inputId = ns("vol_markgene_text"),
       label = mgi18n("vol mark gene ids")

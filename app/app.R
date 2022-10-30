@@ -31,17 +31,45 @@ ui <- fluidPage(
         id = "mggplot",
         container = esquisseContainer(fixed = TRUE)
     )
+
 )
+
 
 server <- function(input, output, session) {
 
+    data <- reactive({
+        # http://127.0.0.1:4366/?data_path=test1.diff.txt
+        print(session)
+        query <- parseQueryString(session$clientData$url_search)
+        if(is.null(query$data_path)) {
+            query$data = NULL
+        }else{
+            if(file.exists(query$data_path)){
+                print(c("QUERY", query))
+                query$data = read.csv(query$data_path, sep="\t", header = TRUE)
+            }else{
+                query$data = NULL
+            }   
+        }
+        query
+
+    })
+    #       #   print(c("geo", query[['geo']]))
+    #       geo_default_id = query[['geo']]
 
 
-callModule(module = mggplotServer, id = "mggplot")
+    callModule(module = mggplotServer,  id = "mggplot", data = data())
+    ## url bookmark
+    # observe({
+    #     reactiveValuesToList(input)
+    #     session$doBookmark()
+    # })
+    # onBookmarked(updateQueryString)
+    
 
 }
 
 
 
-shinyApp(ui, server)
+shinyApp(ui, server, enableBookmarking = "server")
 

@@ -62,6 +62,7 @@ mggplotUI <- function(id, header = TRUE,
         class = "btn-sm",
         title = "映射"
       ),
+      # bookmarkButton(),
       actionButton(
         inputId = ns("close"),
         label = NULL,

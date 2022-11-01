@@ -398,8 +398,7 @@ html_dependency_dragula <- function() {
   htmlDependency(
     name = "esquisse-dragula",
     version = packageVersion("esquisse"),
-    src = c(file = "assets/dragula", href = "esquisse/dragula"),
-    package = "esquisse",
+    src = c(href = "assets/dragula"),
     script = c("dragula.min.js", "dragula-bindings.js"),
     stylesheet = c("dragula.min.css", "styles-dad.css"),
     all_files = FALSE

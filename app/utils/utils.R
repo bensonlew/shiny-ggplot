@@ -202,7 +202,7 @@ geomIcons <- function() {
     "point", "jitter", "boxplot", "violin", "density",
     "tile", "sf"
   )
-  href <- "esquisse/geomIcon/gg-%s.png"
+  href <- "assets/geomIcon/gg-%s.png"
   geomsChoices <- lapply(
     X = geoms,
     FUN = function(x) {

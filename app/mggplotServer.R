@@ -33,6 +33,7 @@ mggplotServer <- function(input,
     # hideTab(inputId="mggplot", target="ui_aesthetics")
   })
   observeEvent(input$settings, {
+    saveRDS(input, "input.rds")
     showModal(modal_settings(aesthetics = input$aesthetics))
   })
 

@@ -28,6 +28,9 @@ source("modules/input-drop.R")
 source("modules/input-dragula.R")
 source("utils/ggcall.R")
 source("utils/safe_ggplot.R")
+source("utils/geometries.R")
+source("utils/save.R")
+
 mytrantab = read.csv("inst/i18n/cn.csv")
 mgi18n <- function(a){
     i18n(a, mytrantab)
@@ -36,3 +39,15 @@ mgi18n <- function(a){
 source("esquisse-ui.R")
 source("mggplotUI.R")
 source("mggplotServer.R")
+
+
+shiny::registerInputHandler("esquisse.dragula", function(data, ...) {
+    if (is.null(data)) {
+        NULL
+    } else {
+        data$source <- unlist(data$source)
+        data$target <- lapply(data$target, unlist, recursive = FALSE)
+        names(data$target) <- idToChar(names(data$target))
+        data
+    }
+}, force = TRUE)

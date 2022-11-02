@@ -96,4 +96,75 @@ pre_settings <- function(view = NULL, session = shiny::getDefaultReactiveDomain(
   )
 }
 
+save_load <- function(save = NULL, session = shiny::getDefaultReactiveDomain()) {
+  ns <- session$ns
+  load_records <- c()
+  modalDialog(
+    title = tagList(
+      mgi18n("save & load"),
+      tags$button(
+        ph("x", title = mgi18n("Save")),
+        title = mgi18n("Save"),
+        class = "btn btn-default",
+        style = "border: 0 none; position: absolute; top: 5px; right: 5px;",
+        `data-dismiss` = "modal",
+        `data-bs-dismiss` = "modal"
+      )
+    ),
+    tags$label(
+      mgi18n("Select setting of page"),
+      `for` = ns("view"),
+      class = "control-label"
+    ),
+    shinyWidgets::alert(
+      ph("info"),
+      mgi18n("save"),
+      status = "info"
+    ),
+
+    textInput(inputId = 'save_name', 
+      label = 'save_name', 
+      value="mggplot-result"),
+
+    actionButton(
+      inputId = "save", label = "save",
+      icon = icon("file-powerpoint-o"),
+      class = "btn-block btn-primary"
+    ),
+    selectInput(inputId = 'load_records',
+      label = 'load_records',
+      choices = names(load_records),
+      selected = names(load_records)[[0]]),
+    actionButton(
+      inputId = "load", label = "load",
+      icon = icon("file-powerpoint-o"),
+      class = "btn-block btn-primary"
+    ),
+
+    easyClose = TRUE,
+    footer = NULL,
+    size = "m"
+  )
+}
+
+
+save_load_server <- function(id,
+                                ){
+  callModule(
+    id = id,
+    module = function(input, output, session) {
+      observeEvent(input$save,{
+        
+      })
+      observeEvent(input$load,{
+
+      })
+
+    }
+  )
+
+}
+
+
+
 

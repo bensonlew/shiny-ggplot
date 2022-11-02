@@ -62,6 +62,13 @@ mggplotUI <- function(id, header = TRUE,
         class = "btn-sm",
         title = "映射"
       ),
+      actionButton(
+        inputId = ns("save_load"),
+        label = NULL,
+        icon = icon("gear", class = "fa-lg"),
+        class = "btn-sm",
+        title = "保存"
+      ),
       # bookmarkButton(),
       actionButton(
         inputId = ns("close"),

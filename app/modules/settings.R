@@ -96,8 +96,8 @@ pre_settings <- function(view = NULL, session = shiny::getDefaultReactiveDomain(
   )
 }
 
-save_load <- function(save = NULL, session = shiny::getDefaultReactiveDomain()) {
-  ns <- session$ns
+save_load <- function(id="saveload", save = NULL, session = shiny::getDefaultReactiveDomain()) {
+  ns <- NS(id)
   load_records <- c()
   modalDialog(
     title = tagList(
@@ -122,21 +122,23 @@ save_load <- function(save = NULL, session = shiny::getDefaultReactiveDomain()) 
       status = "info"
     ),
 
-    textInput(inputId = 'save_name', 
+    textInput(inputId = ns('save_name'), 
       label = 'save_name', 
       value="mggplot-result"),
 
     actionButton(
-      inputId = "save", label = "save",
+      inputId = ns("save"), 
+      label = "save",
       icon = icon("file-powerpoint-o"),
       class = "btn-block btn-primary"
     ),
-    selectInput(inputId = 'load_records',
+    selectInput(inputId = ns('load_records'),
       label = 'load_records',
       choices = names(load_records),
       selected = names(load_records)[[0]]),
     actionButton(
-      inputId = "load", label = "load",
+      inputId = ns("load"), 
+      label = "load",
       icon = icon("file-powerpoint-o"),
       class = "btn-block btn-primary"
     ),
@@ -147,17 +149,20 @@ save_load <- function(save = NULL, session = shiny::getDefaultReactiveDomain()) 
   )
 }
 
-
-save_load_server <- function(id,
+# 模块化ui和server应该同样有ID
+save_load_server <- function(id, data=NULL
                                 ){
   callModule(
     id = id,
     module = function(input, output, session) {
       observeEvent(input$save,{
+        print("save ")
+        print(input$save_name)
+        saveRDS(data, input$save_name)
         
       })
       observeEvent(input$load,{
-
+        value <- readRDS(data, input$load_records)
       })
 
     }

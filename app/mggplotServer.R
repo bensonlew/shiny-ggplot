@@ -38,8 +38,7 @@ mggplotServer <- function(input,
   })
 
   observeEvent(input$save_load, {
-    showModal(save_load())
-    
+    showModal(save_load(id=ns("saveload")))
     # hideTab(inputId="mggplot", target="ui_aesthetics")
   })
 
@@ -235,6 +234,20 @@ mggplotServer <- function(input,
       disabled = setdiff(geoms, geom_possible$x)
     )
   })
+  saveload <- reactiveValues(inputs= NULL)
+  saveload <- save_load_server(
+    id = "saveload",
+    data = data
+  )
+
+  # observeEvent(input$save,{
+  #   print("save")
+  #   saveRDS(data, input$save_name)
+    
+  # })
+  # observeEvent(input$load,{
+  #   value <- readRDS(data, input$load_records)
+  # })
 
   # Module chart controls : title, xlabs, colors, export...
   paramsChart <- reactiveValues(inputs = NULL)

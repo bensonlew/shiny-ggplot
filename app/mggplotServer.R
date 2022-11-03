@@ -26,6 +26,7 @@ mggplotServer <- function(input,
   ns <- session$ns
   ggplotCall <- reactiveValues(code = "")
   dataChart <- reactiveValues(data = NULL, name = NULL)
+
   # Settings modal (aesthetics choices)
   observeEvent(input$settings_pre, {
     showModal(pre_settings(view=input$view))
@@ -53,6 +54,11 @@ mggplotServer <- function(input,
       shinyjs::show(selector=".flexfill-item:first")
      }else{
       shinyjs::hide(selector=".flexfill-item:first")
+     }
+     if("fix_img_size" %in% input$view){
+      dataChart$fix_img_size <- TRUE
+     }else{
+      dataChart$fix_img_size <- FALSE
      }
     #  if("show_img" %in% input$view){
     #   shinyjs::show(id="img_show")
@@ -91,12 +97,24 @@ mggplotServer <- function(input,
         replace = TRUE
       )
     } else {
+      selected = c()
+        if(!is.null(dataChart$aes_x)){
+          selected["xvar"] = dataChart$aes_x
+        }
+        if(!is.null(dataChart$aes_y)){
+          selected["yvar"] = dataChart$aes_y
+        }
+        if(!is.null(dataChart$aes_color)){
+          selected["color"] = dataChart$aes_color
+        }
+      print(c("selected", selected))
       dragulaInput(
         inputId = ns("dragvars"),
         sourceLabel = "Variables",
         targetsLabels = c("X", "Y", aesthetics),
         targetsIds = c("xvar", "yvar", aesthetics),
         choices = "",
+        selected = selected,
         badge = FALSE,
         width = "100%",
         height = "70px",
@@ -108,8 +126,61 @@ mggplotServer <- function(input,
   observeEvent(data$data, {
     dataChart$data <- data$data
     dataChart$name <- data$name
+    if(!is.null(data$type)){
+      dataChart$type <- data$type
+    }
+    if(!is.null(data$subtype)){
+      dataChart$subtype <- data$subtype
+      if(data$subtype == "vol_scatter"){
+        # print("vol_line")
+        # print(ns("vol_line"))
+        # updatePrettyToggle(
+        #   session = session,
+        #   inputId = ns("vol_line"),
+        #   label = "", 
+        #   value = TRUE
+        # )
+
+        data <- isolate(dataChart$data)
+        if("padjust" %in% colnames(data)){
+          data[["log_padjust"]] = -log(data[["padjust"]])
+          vol_logp_max = max(data[["log_padjust"]][data[["log_padjust"]]!=Inf])
+          data[["log_padjust"]][data[["log_padjust"]]==Inf] = vol_logp_max
+          dataChart$data <- data
+          dataChart$aes_y <- "log_padjust"
+        }
+        if("log2fc" %in% colnames(data)){
+          dataChart$aes_x <- "log2fc"
+        }
+        if("significant" %in% colnames(data) && "regulate" %in% colnames(data) ){
+          data[["reg_sig"]] = data[["significant"]]
+          data[["reg_sig"]][data[["reg_sig"]]=="no test"] = "no"
+          data[["reg_sig"]][data[["reg_sig"]]=="yes" & data[["regulate"]]=="up"] = "up"
+          data[["reg_sig"]][data[["reg_sig"]]=="yes" & data[["regulate"]]=="down"] = "down"
+          dataChart$data <- data
+          dataChart$aes_color <-"reg_sig"
+        }
+      }
+    }
+    if(!is.null(data$x)){
+      dataChart$aes_x <- data$x
+    }
+    if(!is.null(data$y)){
+      dataChart$aes_y <- data$y
+    }
+    if(!is.null(data$color)){
+      dataChart$aes_color <- data$color
+    }
+
   }, ignoreInit = FALSE)
 
+
+  observeEvent(data$subtype, {
+    if(data$subtype == "vol_scatter"){
+
+    }
+
+  }, ignoreInit = FALSE)
 
 
   # Launch import modal if no data at start
@@ -167,9 +238,24 @@ mggplotServer <- function(input,
     }
   })
 
+  
+
   # Update drag-and-drop input when data changes
   observeEvent(dataChart$data, {
     data <- dataChart$data
+
+    selected = c()
+ 
+      if(!is.null(dataChart$aes_x)){
+        selected["xvar"] = dataChart$aes_x
+      }
+      if(!is.null(dataChart$aes_y)){
+        selected["yvar"] = dataChart$aes_y
+      }
+      if(!is.null(dataChart$aes_color)){
+        selected["color"] = dataChart$aes_color
+      }
+    
 
     if (is.null(data)) {
       updateDragulaInput(
@@ -194,6 +280,7 @@ mggplotServer <- function(input,
           col_name = var_choices,
           col_type = col_type(data[, var_choices])
         ),
+        selected = selected,
         badge = FALSE
       )
     }
@@ -255,6 +342,7 @@ mggplotServer <- function(input,
     id = "controls",
     type = geom_controls,
     data_table = reactive(dataChart$data),
+    subtype = reactive(dataChart$subtype),
     data_name = reactive({
       req(dataChart$name)
       dataChart$name
@@ -449,7 +537,7 @@ mggplotServer <- function(input,
       data = setNames(list(data, choose_data), c(data_name, "choose_data"))
     )
     ggplotCall$ggobj$plot
-  }, filename = "mggplot")
+  }, filename = "mggplot", fix_img_size=reactive(dataChart$fix_img_size))
 
 
   # Close addin

@@ -39,7 +39,17 @@ server <- function(input, output, session) {
 
     data <- reactive({
         # http://127.0.0.1:4366/?data_path=test1.diff.txt
-        print(session)
+
+        ## data data table name
+        ## type scatter line columns
+        ## subtype subtype of chart such as vol_scatter
+        ## x  x cloumn name in data table
+        ## y  y cloumn name in data table
+        ## color  color columns in data table
+        ## fill
+        ## size
+        ## facet
+        # print(session)
         query <- parseQueryString(session$clientData$url_search)
         if(is.null(query$data_path)) {
             query$data = NULL
@@ -50,6 +60,12 @@ server <- function(input, output, session) {
             }else{
                 query$data = NULL
             }   
+        }
+
+        if(is.null(query$type)){
+            query$type = NULL
+        }else{
+
         }
         query
 

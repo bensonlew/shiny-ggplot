@@ -191,6 +191,7 @@ controls_ui <- function(id,
 controls_server <- function(id,
                             type,
                             data_table,
+                            subtype,
                             data_name,
                             ggplot_rv,
                             aesthetics = reactive(NULL),
@@ -254,8 +255,18 @@ controls_server <- function(id,
           rCodeContainer(id = ns("codeggplot"), code)
         )
       })
-
-
+      #  updatePrettyToggle 函数中的inputId不可以用ns
+      observeEvent(subtype(), {
+        if(subtype() == "vol_scatter"){
+          print("vol_line")
+          print(ns("vol_line"))
+          updatePrettyToggle(
+            session = session,
+            inputId = "vol_line",
+            value = TRUE
+          )
+        }
+      })
 
       # Controls ----
 

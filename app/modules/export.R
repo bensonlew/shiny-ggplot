@@ -311,6 +311,7 @@ downloads_labels <- function(label = ph("download-simple"),
 render_ggplot <- function(id,
                           expr,
                           ...,
+                          fix_img_size=NULL,
                           env = parent.frame(),
                           quoted = FALSE,
                           filename = "export-ggplot") {
@@ -363,10 +364,26 @@ render_ggplot <- function(id,
         }
       )
       rv <- reactiveValues(plot = NULL)
+
       output$plot <- renderPlot({
         rv$plot <- gg_fun()
         rv$plot
       }, ...)
+      observeEvent(fix_img_size(), {
+        if(fix_img_size()){
+          output$plot <- renderPlot({
+            rv$plot <- gg_fun()
+            rv$plot
+          }, ...)
+        }else{
+          print("fix size")
+          output$plot <- renderPlot({
+            rv$plot <- gg_fun()
+            rv$plot
+          }, width=400, height=300, ...)
+        }
+      })
+
       observeEvent(input$more, {
         hideDropMenu("exports_dropmenu")
         save_ggplot_modal(
